@@ -1,5 +1,6 @@
 package utils;
 
+import exception.IllegalRequestHeaderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.RequestHeader;
@@ -31,6 +32,8 @@ public class IOUtils {
         RequestHeader requestHeader = new RequestHeader();
 
         String line = br.readLine();
+        checkRequestHeader(line);
+
         logger.debug("request : {}", line);
         requestHeader.addField(REQUEST_HEADER_FIRST_LINE_NAME, line);
 
@@ -43,6 +46,12 @@ public class IOUtils {
             line = br.readLine();
         }
         return requestHeader;
+    }
+
+    private static void checkRequestHeader(String line) {
+        if (line == null) {
+            throw new IllegalRequestHeaderException();
+        }
     }
 
     private static boolean isValidLine(String line) {
