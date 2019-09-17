@@ -18,20 +18,23 @@ public class HttpRequestParser {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
         List<String> splitFirstLine = parseFirstLine(br.readLine());
 
+        // HTTP request 첫째 줄(상태 라인)엔 httpMethod, uri, 프로토콜 version이 있음
         String httpMethod = splitFirstLine.get(0);
         String uri = splitFirstLine.get(1);
         String version = splitFirstLine.get(2);
 
-        Map<String, String> headFields = new HashMap<>();
+        // 리퀘스트 헤더 필드
+        Map<String, String> headerFields = new HashMap<>();
 
+        //이 부분도 메서드로 빼고 싶음.
         String line = br.readLine();
         while (line != null && !"".equals(line)) {
             List<String> headerField = parseHeaderField(line);
-            addHeaderField(headFields, headerField);
+            addHeaderField(headerFields, headerField);
             line = br.readLine();
         }
 
-        return new HttpRequest(httpMethod, uri, version, headFields);
+        return new HttpRequest(httpMethod, uri, version, headerFields);
     }
 
     private static List<String> parseFirstLine(String line) {
