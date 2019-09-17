@@ -29,33 +29,28 @@ public class RequestHandler implements Runnable {
             connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
             RequestHeader requestHeader = IOUtils.readRequestHeader(br);
 
-            String requestLine = requestHeader.getField(IOUtils.REQUEST_HEADER_FIRST_LINE_NAME);
-            String[] tokens = requestLine.split(" ");
+            String requestLine = requestHeader.getField(RequestHeader.REQUEST_HEADER_FIRST_LINE_NAME);
 
-            String url = null;
-            if ("GET".equals(tokens[0])) {
-                url = tokens[1];
+            String httpMethod = RequestHeaderHandler.findHttpMethod(requestHeader);
+            String url = RequestHeaderHandler.findHttpUrl(requestHeader);
+
+            if ("GET".equals(httpMethod)) {
+                String urlPrefix = RequestHeaderHandler.findHttpUrlPrefix(requestHeader);
+                String urlExtension = RequestHeaderHandler.findHttpUrlExtension(requestHeader);
+
+                DataOutputStream dos = new DataOutputStream(out);
+                byte[] body = FileIoUtils.loadFileFromClasspath(urlPrefix + url);
+                if ("js".equals(urlExtension)) {
+                    response200Header(dos, body.length, "javascript");
+                } else {
+                    response200Header(dos, body.length, urlExtension);
+                }
+                responseBody(dos, body);
             }
 
-            String urlPrefix = "./static";
-            String[] urlTokens = url.split("\\.");
-            String lastUrlToken = urlTokens[urlTokens.length - 1];
-            if ("html".equals(lastUrlToken) || "ico".equals(lastUrlToken)) {
-                urlPrefix = "./templates";
-            }
-
-            DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = FileIoUtils.loadFileFromClasspath(urlPrefix + url);
-            if ("js".equals(lastUrlToken)) {
-                response200Header(dos, body.length, "javascript");
-            } else {
-                response200Header(dos, body.length, lastUrlToken);
-            }
-            responseBody(dos, body);
         } catch (IOException | URISyntaxException e) {
             logger.error(e.getMessage());
         }

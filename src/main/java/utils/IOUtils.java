@@ -11,10 +11,9 @@ import java.io.IOException;
 public class IOUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(IOUtils.class);
-    private static final String DELIMETER = ":";
+    private static final String DELIMITER = ":";
     private static final int SPLIT_LIMIT = 2;
     private static final String EMPTY = "";
-    public static final String REQUEST_HEADER_FIRST_LINE_NAME = "Request-Line";
 
     /**
      * @param BufferedReader는 Request Body를 시작하는 시점이어야
@@ -35,13 +34,13 @@ public class IOUtils {
         checkRequestHeader(line);
 
         logger.debug("request : {}", line);
-        requestHeader.addField(REQUEST_HEADER_FIRST_LINE_NAME, line);
+        requestHeader.addField(RequestHeader.REQUEST_HEADER_FIRST_LINE_NAME, line);
 
         line = br.readLine();
         while (isValidLine(line)) {
             logger.debug("request : {}", line);
 
-            String[] tokens = line.split(DELIMETER, SPLIT_LIMIT);
+            String[] tokens = line.split(DELIMITER, SPLIT_LIMIT);
             requestHeader.addField(tokens[0].trim(), tokens[1].trim());
             line = br.readLine();
         }
