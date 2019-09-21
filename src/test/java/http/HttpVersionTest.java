@@ -1,6 +1,6 @@
 package http;
 
-import http.exception.InvalidHttpVersionException;
+import exception.InvalidHttpVersionException;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

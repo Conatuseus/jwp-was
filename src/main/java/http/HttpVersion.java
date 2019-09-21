@@ -1,6 +1,6 @@
 package http;
 
-import http.exception.InvalidHttpVersionException;
+import exception.InvalidHttpVersionException;
 
 import java.util.Arrays;
 
