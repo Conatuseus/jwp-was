@@ -9,6 +9,10 @@ import java.util.Map;
 public class DataBase {
     private static Map<String, User> users = Maps.newHashMap();
 
+    static {
+        users.put("conas", new User("conas", "conas", "conatuseus", "conatuseus@gmail.com"));
+    }
+
     public static void addUser(User user) {
         users.put(user.getUserId(), user);
     }
